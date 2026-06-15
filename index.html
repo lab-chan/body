@@ -604,7 +604,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
         <div style="padding-left:8px;">
           <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
             <span style="font-size:18px;">🗂️</span>
-            <span style="font-size:15px; font-weight:700; color:var(--text);">2025 시험문제 모음</span>
+            <span style="font-size:15px; font-weight:700; color:var(--text);">2025 대학별 문제</span>
             <span id="sec3badge" style="font-family:var(--mono); font-size:11px; color:#a78bfa; background:#a78bfa15; border:1px solid #a78bfa33; padding:2px 7px; border-radius:20px; margin-left:auto;"></span>
           </div>
           <div style="display:flex; gap:5px; flex-wrap:wrap; margin-bottom:6px;">
@@ -622,7 +622,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
         <div style="padding-left:8px;">
           <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
             <span style="font-size:18px;">📅</span>
-            <span style="font-size:15px; font-weight:700; color:var(--text);">태릉 6/13·14 기출</span>
+            <span style="font-size:15px; font-weight:700; color:var(--text);">2026 대학별 문제</span>
             <span id="sec2badge" style="font-family:var(--mono); font-size:11px; color:#3ecf8e; background:#3ecf8e15; border:1px solid #3ecf8e33; padding:2px 7px; border-radius:20px; margin-left:auto;"></span>
           </div>
           <div style="display:flex; gap:5px; flex-wrap:wrap; margin-bottom:6px;">
@@ -3606,8 +3606,8 @@ document.head.appendChild(examStyle);
 const SECTIONS = [
   { id: 0, name: '✏️ 개정 문제',      color: '#f43f5e', key: 's0' },
   { id: 1, name: '백현종 심판 예상',   color: '#f0a030', key: 's1' },
-  { id: 2, name: '📅 태릉 6/13·14 기출',  color: '#3ecf8e', key: 's2' },
-  { id: 3, name: '2025 시험문제 모음', color: '#a78bfa', key: 's3' },
+  { id: 2, name: '2026 대학별 문제',        color: '#3ecf8e', key: 's2' },
+  { id: 3, name: '2025 대학별 문제',   color: '#a78bfa', key: 's3' },
 ];
 
 // 섹션별 문제 배열
@@ -3723,7 +3723,7 @@ const SECTION_QUESTIONS = [
       answer: `【자이언트 세트 정의】 다양한 광배근 운동을 휴식 없이 4~6가지 실시\n\n① 렛풀다운 (광배근 전체·와이드)\n② 시티드 케이블 로우 (광배근 중부·두께)\n③ 덤벨 원암 로우 (광배근 고립)\n④ 풀업 또는 바벨 로우 (추가 선택)\n\n【감점 포인트 7가지】\n1. 세 가지만 실시 (4개 이상 필수)\n2. 같은 운동 두 번 포함\n3. 각 동작마다 자세 부정확\n4. 과도한 반동 사용\n5. 주동근(광배근) 역할이 보이지 않는 자세\n6. 로봇 같은 끊기는 동작\n7. 호흡 및 속도 미확인`,
       tip: '감점 7가지 중 "4개 이상 필수" + "자세 정확도" + "주동근 역할" 3개가 가장 중요' },
   ],
-  // ── 섹션 2: 2026년 태릉 기출 (6/13~14) ──
+  // ── 섹션 2: 2026 대학별 문제 ──
   [
     // ════ 최빈출 · 신유형 ════
     { group: '🔥 2026 최빈출·신유형', q: '아세틸콜린(Acetylcholine)이란 무엇이며 근수축에서 하는 역할은?',
@@ -4055,7 +4055,7 @@ const SECTION_QUESTIONS = [
       answer: `【주동근】 상완삼두근(트라이셉스, Triceps Brachii)\n\n① 벤치에 누워 바벨을 어깨 수직 위로\n② 그립: 어깨너비~좁게, 오버핸드\n③ 팔꿈치 고정: 수직 위치에서 팔꿈치만 굽히기 (위팔 고정)\n④ 하강: 이마 또는 정수리 방향으로 바를 내림\n⑤ 하단: 전완이 90° 이하까지\n⑥ 상승: 팔꿈치 고정하며 완전 신전\n\n✔ 감점 포인트: 팔꿈치 벌어짐, 위팔이 움직임, 불완전 신전`,
       tip: '"팔꿈치 고정 + 이마 방향 + 위팔 움직이지 않기"가 핵심 3가지. 스컬크러셔=두개골분쇄기' },
   ],
-  // ── 섹션 3: 2025 시험문제 모음 ──
+  // ── 섹션 3: 2025 대학별 문제 ──
   [
     // ════ 실기 · 하체 ════
     { type:'실기', univ:'공통', group:'🏋️ 실기 · 하체', q:'바벨 백스쿼트를 실시하시오',
