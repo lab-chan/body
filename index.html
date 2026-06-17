@@ -8319,8 +8319,10 @@ function renderExamList() {
     if (filterSubj !== 'all') qs = qs.filter(q => getSubjectForCard(q) === filterSubj);
     if (filterUniv !== 'all' && (currentSection === 2 || currentSection === 3)) {
       qs = qs.filter(q => {
-        if (filterUniv === '공통') return !q.univ || q.univ === '공통';
-        return q.univ && (q.univ === filterUniv || q.univ.includes(filterUniv));
+        const u = q.univ || '공통';
+        if (filterUniv === '공통') return u === '공통';
+        // 특정 장소 필터 = 해당 장소 전용 + 공통 카드 모두 표시
+        return u === filterUniv || u === '공통' || u.includes(filterUniv);
       });
     }
     if (filterStar !== 'all' && currentSection === 2) {
@@ -8388,6 +8390,8 @@ function renderExamList() {
     });
   }
   document.getElementById('examList').innerHTML = html;
+
+  updateFilterCounts();
 }
 
 function toggleListItem(i) {
