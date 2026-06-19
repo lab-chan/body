@@ -814,16 +814,15 @@
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;max-width:480px;margin:0 auto;-webkit-font-smoothing:antialiased;}
 
-/* ── D-DAY 상단 중앙 ── */
-.dday-top{display:flex;justify-content:center;padding:9px 0 5px;background:var(--surface);}
+/* ── 상단바 (하나로 통합) ── */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:30;padding:8px 14px 9px;}
+.topbar-row1{display:flex;justify-content:center;margin-bottom:8px;}
+.topbar-row2{display:flex;align-items:center;gap:8px;}
 .dday-badge{font-family:var(--mono);font-size:13px;font-weight:700;color:#fff;
-  background:linear-gradient(135deg,#10b981,#2dd4a0);border:none;border-radius:20px;
-  padding:5px 18px;cursor:pointer;letter-spacing:.06em;box-shadow:0 2px 10px color-mix(in srgb,#10b981 35%,transparent);
+  background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:20px;
+  padding:5px 20px;cursor:pointer;letter-spacing:.06em;box-shadow:0 2px 12px color-mix(in srgb,#7c5cf0 40%,transparent);
   transition:transform .12s;}
 .dday-badge:hover{transform:translateY(-1px);}
-
-/* ── 헤더 (제목 디자인) ── */
-.hdr{display:flex;align-items:center;gap:8px;padding:4px 14px 10px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:30;}
 .hdr-title{flex:1;font-size:17px;font-weight:900;letter-spacing:-.02em;display:flex;align-items:center;gap:7px;}
 .hdr-emoji{font-size:18px;}
 .hdr-grad{background:linear-gradient(120deg,var(--accent),#8b7bf0 70%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
@@ -832,7 +831,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .btn-theme:hover{border-color:var(--accent);}
 
 /* ── 필터 바 ── */
-.filter-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:6px 12px 0;position:sticky;top:51px;z-index:29;}
+.filter-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:6px 12px 0;}
 .filter-main{display:flex;gap:4px;align-items:center;padding-bottom:6px;}
 .btn-flt{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.04em;padding:5px 12px;border:1.5px solid var(--border);border-radius:6px;background:transparent;color:var(--text-md);cursor:pointer;white-space:nowrap;transition:all .12s;}
 .btn-flt:hover{border-color:var(--accent);color:var(--text);}
@@ -849,12 +848,14 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .btn-sub:hover{border-color:var(--accent);color:var(--text);}
 .btn-sub.act{background:var(--accent);border-color:var(--accent);color:#fff;}
 
-/* ── 진행 영역 : 좌 과목명 / 우 절반 진행바 ── */
-.prog-area{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 13px 7px;}
-.prog-subject{font-size:13px;font-weight:700;color:var(--text);flex-shrink:0;letter-spacing:-.01em;}
-.prog-right{width:50%;display:flex;flex-direction:column;gap:4px;align-items:flex-end;}
+/* ── 진행 영역 : 좌 "과목 (소분류)" / 우 진행바+별표+숫자 ── */
+.prog-area{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:9px 13px 8px;}
+.prog-subject{font-size:13px;font-weight:700;color:var(--text);letter-spacing:-.01em;line-height:1.5;padding-top:1px;}
+.prog-right{width:50%;flex-shrink:0;display:flex;flex-direction:column;gap:5px;}
 .prog-bar{width:100%;height:4px;background:var(--border);border-radius:3px;overflow:hidden;}
 .prog-fill{height:100%;background:var(--cc);border-radius:3px;transition:width .3s ease;}
+.prog-meta-row{display:flex;align-items:center;justify-content:space-between;}
+.prog-stars{font-size:12px;color:var(--sil);letter-spacing:1px;}
 .prog-count{font-family:var(--mono);font-size:10px;color:var(--text-dim);}
 
 /* ── 카드 ── */
@@ -1031,19 +1032,19 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
 </head>
 <body>
 
-<!-- ── D-day 상단 중앙 ── -->
-<div class="dday-top">
-  <span class="dday-badge" id="ddayBadge" onclick="openDdayEdit()">D-?</span>
-</div>
-
-<!-- ── 헤더 ── -->
-<div class="hdr">
-  <span class="hdr-title">
-    <span class="hdr-emoji">🏋️</span>
-    <span class="hdr-tag">2급</span>
-    <span class="hdr-grad">보디빌딩 생활</span>
-  </span>
-  <button class="btn-theme" id="themeBtn" onclick="toggleTheme()">🌙</button>
+<!-- ── 상단바 (D-day 중앙 + 제목 한 바) ── -->
+<div class="topbar">
+  <div class="topbar-row1">
+    <span class="dday-badge" id="ddayBadge" onclick="openDdayEdit()">D-?</span>
+  </div>
+  <div class="topbar-row2">
+    <span class="hdr-title">
+      <span class="hdr-emoji">🏋️</span>
+      <span class="hdr-tag">2급</span>
+      <span class="hdr-grad">보디빌딩 생활</span>
+    </span>
+    <button class="btn-theme" id="themeBtn" onclick="toggleTheme()">🌙</button>
+  </div>
 </div>
 
 <!-- ── 필터 바 ── -->
@@ -1058,12 +1059,15 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
   <div class="sub-filter-row" id="subFilterRow"></div>
 </div>
 
-<!-- ── 진행 영역 (좌 과목 / 우 진행바) ── -->
+<!-- ── 진행 영역 (좌 과목(소분류) / 우 진행바+별표+숫자) ── -->
 <div class="prog-area" id="progArea">
-  <span class="prog-subject" id="progSubject">전체</span>
+  <span class="prog-subject" id="progSubject">운동생리학</span>
   <div class="prog-right">
     <div class="prog-bar"><div class="prog-fill" id="progressFill" style="width:0%"></div></div>
-    <span class="prog-count" id="progressText">1 / 107</span>
+    <div class="prog-meta-row">
+      <span class="prog-stars" id="progStars"></span>
+      <span class="prog-count" id="progressText">1 / 107</span>
+    </div>
   </div>
 </div>
 
@@ -3830,6 +3834,7 @@ function render(){
   const fill  = document.getElementById('progressFill');
   const ptxt  = document.getElementById('progressText');
   const psub  = document.getElementById('progSubject');
+  const pstar = document.getElementById('progStars');
   const cardEl= document.getElementById('card');
 
   if(!total){
@@ -3837,6 +3842,7 @@ function render(){
     if(fill) fill.style.width='0%';
     if(ptxt) ptxt.textContent='0 / 0';
     if(psub) psub.textContent = filterSub!=='all' ? filterSub : filterMode;
+    if(pstar) pstar.textContent='';
     document.getElementById('prevBtn').disabled=true;
     document.getElementById('nextBtn').disabled=true;
     return;
@@ -3847,8 +3853,8 @@ function render(){
 
   if(fill){ fill.style.width = `${((currentIndex+1)/total)*100}%`; fill.style.background=color; }
   if(ptxt) ptxt.textContent = `${currentIndex+1} / ${total}`;
-  if(psub) psub.textContent = filterSub!=='all' ? filterSub
-            : (filterMode!=='전체' ? filterMode : cardSubject(card));
+  if(psub) psub.textContent = `${cardSubject(card)} (${card.sub})`;
+  if(pstar) pstar.textContent = card.freq ? '★'.repeat(card.freq) : '';
   document.getElementById('prevBtn').disabled = currentIndex===0;
   document.getElementById('nextBtn').disabled = currentIndex===total-1;
 
@@ -3882,8 +3888,7 @@ function render(){
   cardEl.innerHTML = `
     <div class="ck-hdr">
       <span class="ck-cat">${card.cat}</span>
-      <span class="ck-sub">${card.sub} · ${cardSubject(card)}</span>
-      ${card.freq?`<span class="ck-freq">${'★'.repeat(card.freq)}</span>`:''}
+      <span class="ck-sub">${card.sub}</span>
       <span class="ck-num">#${String(currentIndex+1).padStart(2,'0')}</span>
     </div>
     <div class="ck-q" onclick="revealAll()">
