@@ -122,6 +122,11 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 #card.grid-mode .ci-kw{font-size:13px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;transition:none;}
 #card.grid-mode .ci-chev{display:none;}
 #card.grid-mode .ci-full{display:none !important;}
+#card.grid-mode .ci-n{display:none;}
+#card.grid-mode .ci-kw{display:none;}
+#card.grid-mode .ci-label{display:block;font-size:16px;font-weight:700;color:var(--text);line-height:1.3;word-break:keep-all;}
+#card.grid-mode .ci.open .ci-label{color:var(--cc);}
+.ci-label{display:none;}
 #card.blind.grid-mode .ci-kw{filter:blur(6px);user-select:none;}
 #card.blind.grid-mode .ci.open .ci-kw,#card.allopen.grid-mode .ci-kw{filter:none;}
 /* 그리드 상세박스 */
@@ -3550,6 +3555,18 @@ function extractKw(t){
   if(kw.length>22) kw = kw.slice(0,20)+'…';
   return kw || plain.slice(0,20);
 }
+function extractLabel(t){
+  const em = t.match(/<em>(.*?)<\/em>/);
+  let s = em ? em[1].replace(/<[^>]+>/g,'') : '';
+  if(!s){
+    let p = t.replace(/<[^>]+>/g,'').trim();
+    p = p.replace(/^[^:：]+[：:]\s*/,'');
+    s = p.split(/[—:→·,]/)[0].trim();
+  }
+  s = s.replace(/\s*\([^)]*\)/g,'').trim();
+  const w = s.split(/\s+/);
+  return w.length > 2 ? w.slice(0,2).join(' ') : (s||'—');
+}
 
 // ── 필터 ──
 function setFilterMode(mode, el){
@@ -3660,8 +3677,9 @@ function buildItemsHtml(card){
   const tot = card.items.length;
   return card.items.map((it,idx)=>{
     const kw = extractKw(it.t);
+    const lbl = extractLabel(it.t);
     const span = (tot%2===1 && idx===tot-1) ? ' span2' : '';
-    return `<div class="ci${span}" onclick="tapItem(${idx})"><div class="ci-head"><span class="ci-n">${it.n}</span><span class="ci-kw">${kw}</span><span class="ci-chev">▾</span></div><div class="ci-full">${it.t}</div></div>`;
+    return `<div class="ci${span}" onclick="tapItem(${idx})"><div class="ci-head"><span class="ci-n">${it.n}</span><span class="ci-label">${lbl}</span><span class="ci-kw">${kw}</span><span class="ci-chev">▾</span></div><div class="ci-full">${it.t}</div></div>`;
   }).join('');
 }
 
