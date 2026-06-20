@@ -33,7 +33,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
   padding:5px 16px;cursor:pointer;letter-spacing:.05em;box-shadow:0 2px 12px color-mix(in srgb,var(--accent) 40%,transparent);
   transition:transform .12s;}
 .dday-badge:hover{transform:translateY(-1px);}
-.hdr-title{justify-self:start;font-size:15px;font-weight:900;letter-spacing:-.02em;display:flex;align-items:center;gap:6px;}
+.hdr-title{justify-self:start;font-size:12px;font-weight:900;letter-spacing:-.02em;display:flex;align-items:center;gap:6px;}
 .hdr-grad{background:linear-gradient(120deg,var(--accent),#8b7bf0 70%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
 .hdr-tag{font-family:var(--mono);font-size:10px;font-weight:700;color:#fff;background:var(--accent);border-radius:5px;padding:2px 7px;letter-spacing:.02em;}
 .btn-theme{justify-self:end;width:30px;height:30px;border:1px solid var(--border);background:var(--surface2);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:border-color .15s;}
@@ -279,8 +279,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
   <div class="topbar-row2">
     <span class="hdr-title">
       <span class="hdr-grad">보디빌딩</span>
-      <span class="hdr-tag">2급</span>
-      <span class="hdr-grad">생활</span>
+      <span class="hdr-tag">2급 생활</span>
     </span>
     <span class="dday-badge" id="ddayBadge" onclick="openDdayEdit()">D-?</span>
     <button class="btn-theme" id="themeBtn" onclick="toggleTheme()">🌙</button>
@@ -3854,7 +3853,13 @@ examStyle.textContent = `
     transition: all .15s;
   }
   .s3f:hover { border-color: #a78bfa; color: #a78bfa; }
-  .s3f.active-s3f { background: #a78bfa; border-color: #a78bfa; color: #fff; }
+    /* ── 예상문제 통합 필터바 버튼 스타일 ── */
+  .xfl { font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--text-dim); letter-spacing: .04em; flex-shrink: 0; white-space: nowrap; }
+  .xfb { font-family: var(--mono); font-size: 10px; font-weight: 700; padding: 4px 9px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text-muted); cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: all .15s; }
+  .xfb:hover { border-color: var(--sec-color, #3ecf8e); color: var(--text); }
+  .xfb.active-xf { background: var(--sec-color, #3ecf8e); border-color: var(--sec-color, #3ecf8e); color: #fff; }
+  .xfc { font-family: var(--mono); font-size: 9px; font-weight: 700; margin-left: 3px; opacity: .85; }
+.s3f.active-s3f { background: #a78bfa; border-color: #a78bfa; color: #fff; }
 `;
 document.head.appendChild(examStyle);
 
