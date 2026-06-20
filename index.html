@@ -96,22 +96,20 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 #card.blind .ck-sum-txt{filter:blur(6px);user-select:none;}
 #card.blind .ck-summary.show .ck-sum-txt,#card.allopen .ck-sum-txt{filter:none;}
 
-/* ── 답안 : 아코디언(세로) ── */
-.ck-grid{display:flex;flex-direction:column;gap:6px;padding:10px;}
-.ci{border:1.5px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;background:var(--surface);transition:border-color .13s,background .13s;}
+/* ── 답안 : 2×2 그리드 ── */
+.ck-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:10px 10px 4px;}
+.ci{border:1.5px solid var(--border);border-radius:10px;padding:11px 13px;cursor:pointer;background:var(--surface);transition:border-color .13s,background .13s;font-size:14px;font-weight:700;color:var(--text);line-height:1.4;}
 .ci:hover{border-color:var(--cc);}
-.ci.open{border-color:var(--cc);background:color-mix(in srgb,var(--cc) 5%,transparent);}
-.ci-head{display:flex;align-items:center;gap:10px;padding:13px 14px;}
-.ci-n{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--cc);flex-shrink:0;}
-.ci-kw{flex:1;font-size:14.5px;font-weight:700;line-height:1.4;color:var(--text);transition:filter .2s;}
-#card.blind .ci-kw{filter:blur(6px);user-select:none;}
-#card.blind .ci.open .ci-kw,#card.allopen .ci-kw{filter:none;}
-.ci-chev{font-size:11px;color:var(--text-dim);flex-shrink:0;transition:transform .2s;}
-.ci.open .ci-chev{transform:rotate(180deg);}
-.ci-full{max-height:0;overflow:hidden;font-size:13px;color:var(--text-md);line-height:1.65;padding:0 14px;transition:max-height .25s ease,padding .25s ease;}
-.ci.open .ci-full,#card.allopen .ci-full{max-height:400px;padding:0 14px 13px;}
-.ci-full em{font-style:normal;font-weight:700;color:var(--cc);}
-.ci-full .arrow{color:var(--cc);font-weight:700;}
+.ci.open{border-color:var(--cc);background:color-mix(in srgb,var(--cc) 8%,transparent);color:var(--cc);}
+.ci.span2{grid-column:1/-1;}
+.ci-n{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--cc);display:block;margin-bottom:3px;}
+.ci-detail{margin:0 10px 8px;padding:12px 14px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;font-size:13px;color:var(--text-md);line-height:1.65;display:none;}
+.ci-detail.show{display:block;}
+.ci-detail em{font-style:normal;font-weight:700;color:var(--cc);}
+.ci-detail .arrow{color:var(--cc);font-weight:700;}
+#card.blind .ci{filter:blur(6px);user-select:none;}
+#card.blind .ci.open,#card.allopen .ci{filter:none;}
+#card.allopen .ci-detail{display:block;}
 
 .ck-bottom{border-top:1px solid var(--border);}
 .ck-bottom-row{display:flex;}
@@ -3593,17 +3591,11 @@ function render(){
 
   const w = wrongSet.has(card.q);
 
-  // 답안 아코디언
+  // 답안 2×2 그리드
+  const _tot = card.items.length;
   const grid = card.items.map((it,idx)=>{
-    const kw = extractKw(it.t);
-    return `<div class="ci" onclick="tapItem(${idx})">
-      <div class="ci-head">
-        <span class="ci-n">${it.n}</span>
-        <span class="ci-kw">${kw}</span>
-        <span class="ci-chev">▾</span>
-      </div>
-      <div class="ci-full">${it.t}</div>
-    </div>`;
+    const span = (_tot%2===1 && idx===_tot-1) ? ' span2' : '';
+    return `<div class="ci${span}" onclick="tapItem(${idx})" data-full="${it.t.replace(/"/g,'&quot;')}">${it.n}</div>`;
   }).join('');
 
   const gloss = (typeof GLOSSARY!=='undefined') ? GLOSSARY[card.q] : null;
@@ -3629,6 +3621,7 @@ function render(){
       <span class="ck-sum-txt">${card.summary}</span>
     </div>
     <div class="ck-grid">${grid}</div>
+    <div class="ci-detail" id="ciDetail"></div>
     ${(hasGloss||hasPrin)?`
     <div class="ck-bottom">
       <div class="ck-bottom-row">
@@ -3662,26 +3655,46 @@ function buildPrinciple(card){
 
 // ── 카드 상호작용 ──
 function tapItem(idx){
-  const ci = document.querySelectorAll('#card .ci')[idx];
-  if(ci) ci.classList.toggle('open');
+  const c=document.getElementById('card');
+  const cells=c.querySelectorAll('.ci');
+  const det=c.querySelector('.ci-detail');
+  if(!det)return;
+  const cell=cells[idx];
+  const was=cell.classList.contains('open');
+  cells.forEach(e=>e.classList.remove('open'));
+  if(was){det.classList.remove('show');det.innerHTML='';}
+  else{cell.classList.add('open');det.innerHTML=cell.dataset.full||'';det.classList.add('show');}
 }
 function revealAll(){
-  const c = document.getElementById('card');
-  const on = c.classList.toggle('allopen');
-  c.querySelectorAll('.ci').forEach(e=>e.classList.toggle('open', on));
-  const s = c.querySelector('.ck-summary');
-  if(s) s.classList.toggle('show', on);
+  const c=document.getElementById('card');
+  const on=c.classList.toggle('allopen');
+  const cells=c.querySelectorAll('.ci');
+  const det=c.querySelector('.ci-detail');
+  cells.forEach(e=>e.classList.toggle('open',on));
+  if(det){
+    if(on){
+      let h='';
+      cells.forEach((cell,i)=>{
+        const sep=i<cells.length-1?'border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:10px;':'';
+        h+=`<div style="${sep}"><strong style="color:var(--cc)">${cell.textContent}</strong><br><span style="font-size:13px;color:var(--text-md)">${cell.dataset.full||''}</span></div>`;
+      });
+      det.innerHTML=h; det.classList.add('show');
+    } else { det.innerHTML=''; det.classList.remove('show'); }
+  }
+  const s=c.querySelector('.ck-summary');
+  if(s) s.classList.toggle('show',on);
 }
 function toggleBlind(){
-  blurOn = !blurOn;
-  const c = document.getElementById('card');
-  c.classList.toggle('blind', blurOn);
-  const b = c.querySelector('.ck-blind-btn');
-  if(b){ b.classList.toggle('on', blurOn); b.textContent = blurOn?'🫣 가리는 중':'👁 답 가리기'; }
+  blurOn=!blurOn;
+  const c=document.getElementById('card');
+  c.classList.toggle('blind',blurOn);
+  const b=c.querySelector('.ck-blind-btn');
+  if(b){b.classList.toggle('on',blurOn);b.textContent=blurOn?'🫣 가리는 중':'👁 답 가리기';}
   if(blurOn){
     c.classList.remove('allopen');
     c.querySelectorAll('.ci').forEach(e=>e.classList.remove('open'));
-    const s=c.querySelector('.ck-summary'); if(s)s.classList.remove('show');
+    const det=c.querySelector('.ci-detail');if(det){det.classList.remove('show');det.innerHTML='';}
+    const s=c.querySelector('.ck-summary');if(s)s.classList.remove('show');
   }
 }
 function toggleDefPanel(){
