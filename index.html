@@ -3564,7 +3564,9 @@ function extractLabel(t){
     s = p.split(/[—:→·,]/)[0].trim();
   }
   s = s.replace(/\s*\([^)]*\)/g,'').trim();
-  return s.split(/\s+/)[0] || '—';
+  const w = s.split(/\s+/).filter(Boolean);
+  for(const word of w){ if(!/적인$|스러운$|적$/.test(word)) return word; }
+  return w[0]||'—';
 }
 
 // ── 필터 ──
