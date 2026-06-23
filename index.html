@@ -1901,7 +1901,8 @@ const ALL_CARDS = [
     { n:'정의', t:'<em>WADA(세계도핑방지기구)</em> — 1999년 설립 / 스포츠 도핑 근절 위한 국제 독립기구' },
     { n:'금지목록', t:'매년 <em>1월 1일 갱신</em> / 경기 중 금지·상시 금지·특정 종목만 금지로 분류 / ①경기력향상 ②건강위해 ③스포츠정신위반' },
     { n:'검사체계', t:'소변검사(기본) + 혈액검사(EPO·HGH 등) / <em>소재지 정보(Whereabouts)</em>로 불시 검사 가능' },
-    { n:'한국기관', t:'한국: <em>KADA(한국도핑방지위원회)</em> / 신고: <em>스포츠윤리센터 1670-2876</em>'}
+    { n:'한국기관', t:'한국: <em>KADA(한국도핑방지위원회)</em> / 신고: <em>스포츠윤리센터 1670-2876</em>'},
+    { n:'3대 기준', t:'공고문 도핑관리 기준: ① <em>세계도핑방지규약</em>(WADA Code) ② <em>국제표준</em>(금지목록·검사조사·TUE·결과관리 등) ③ <em>한국도핑방지규정</em>(KADA)' }
   ],
   keywords: ['WADA', '금지목록', '소재지', '경기외검사', '제재', '2년자격정지'],
   extra: 'WADA(세계) → KADA(한국) 계층 구조. 금지목록 3분류: ①상시 금지(경기 내외) ②경기 중 금지 ③특정 종목 금지. TUE = Therapeutic Use Exemption. 소재지 정보 = Whereabouts.',
@@ -2034,7 +2035,7 @@ const ALL_CARDS = [
     { n:'정의', t:'<em>TUE(Therapeutic Use Exemption)</em> — 의학적 필요에 의해 금지약물 사용을 예외적으로 허가' },
     { n:'요건1·2', t:'① <em>치료 목적 이외 사용 불가</em>(의학적 필요성) ② <em>대체 약물 없음</em>(금지 안 된 대안 없어야 함)' },
     { n:'요건3·4', t:'③ <em>경기력 향상 효과 없음</em>(치료 이상의 향상 없어야) ④ <em>도핑 위반 결과가 아닌 상태</em>' },
-    { n:'신청절차', t:'주치의 진단서 + 신청서 → KADA/연맹 제출 → <em>TUEC 30일 내 심사</em> → 승인/거부 통보'}
+    { n:'신청절차', t:'주치의 진단서 + 신청서 → KADA/연맹 제출 → <em>TUEC 심사(통상 7근무일)</em> → 승인/거부 통보'}
   ],
   keywords: ['TUE', 'TUEC', '치료목적', '금지약물', '면책', '승인요건4'],
   extra: 'TUE 4요건 암기: 「건치경대」 — 건강손상 / 치료목적 / 경기력향상없음 / 대체불가. 소변→혈액 대체 불가 이유: 소변에서만 검출되는 약물 존재. TUEC = 스포츠의학 전문가 3인 이상.',
@@ -3075,7 +3076,7 @@ const ALL_CARDS = [
   items:[
 
     { n:'TUEC정의', t:'<em>TUEC(치료목적사용면책위원회)</em> — 의사 3명 이상 구성 / TUE 신청 심사·결정 기관' },
-    { n:'신청절차', t:'주치의 진단서 + TUE 신청서 → 연맹/KADA 제출 → <em>TUEC 30일 내 심사</em> → 결정 통보' },
+    { n:'신청절차', t:'주치의 진단서 + TUE 신청서 → 연맹/KADA 제출 → <em>TUEC 심사(통상 7근무일)</em> → 결정 통보' },
     { n:'긴급TUE', t:'응급 상황(수술·입원) 시 <em>소급 TUE 신청 가능</em> / 사후 인정 — 검사 전 승인 못 받은 경우' },
     { n:'항소', t:'TUE 거부 시 <em>CAS(스포츠중재재판소)</em> 항소 가능 / WADA도 승인된 TUE 재검토 권한 보유'}
   ],
@@ -4980,8 +4981,8 @@ let wrongSet = new Set(JSON.parse(localStorage.getItem('bbWrong') || '[]'));
 let examDateStr = localStorage.getItem('examDate') || '2026-06-27';
 let itemLayout = localStorage.getItem('bbLayout') || 'accordion';
 
-const SUBS_GUL = ['운동생리학','스포츠영양학','기능해부학','트레이닝론','도핑방지','스포츠안전','스포츠인권','생활체육'];
-const SUBS_SIL = ['동작','포징'];
+const SUBS_GUL = ['운동생리학','스포츠영양학','기능해부학','트레이닝론','도핑방지','스포츠안전','스포츠인권','생활체육','IFBB'];
+const SUBS_SIL = ['동작','IFBB'];
 
 // ── 유형/과목 매핑 ──
 function cardType(c){
@@ -4990,7 +4991,7 @@ function cardType(c){
   return '구술';
 }
 function cardSubject(c){
-  if(cardType(c)==='실기') return c.cat==='트레이닝' ? '동작' : '포징';
+  if(cardType(c)==='실기') return c.cat==='트레이닝' ? '동작' : 'IFBB';
   if(c.cat==='생리학') return '운동생리학';
   if(c.cat==='영양학') return '스포츠영양학';
   if(c.cat==='해부학') return '기능해부학';
@@ -5049,7 +5050,8 @@ function setSubFilter(sub, el){
 }
 function applyFilter(){
   filteredCards = ALL_CARDS.filter(c=>{
-    if(filterMode!=='전체' && cardType(c)!==filterMode) return false;
+    const _ifbb = c.cat==='규정' && ['IFBB 종목','IFBB 복장','IFBB 규정'].includes(c.sub);
+    if(filterMode!=='전체' && cardType(c)!==filterMode && !_ifbb) return false;
     if(filterSub!=='all'   && cardSubject(c)!==filterSub) return false;
     return true;
   });
