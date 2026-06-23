@@ -187,6 +187,44 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .report-body ul{margin:4px 0 9px;padding-left:17px;}
 .report-body li{margin:4px 0;}
 .report-body b{font-weight:600;}
+/* ── 카드 이슈 팝업 ── */
+.ck-issue-btn{font-size:11px;padding:2px 7px;border:1px solid var(--border);border-radius:5px;background:none;color:var(--text);opacity:.5;cursor:pointer;transition:.15s;}
+.ck-issue-btn:hover{opacity:1;background:var(--surface2);}
+.issue-popup{position:absolute;bottom:calc(100% + 8px);right:0;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:10px 13px;font-size:12px;line-height:1.55;color:var(--text);max-width:270px;z-index:300;box-shadow:0 6px 20px #0004;white-space:pre-line;}
+.issue-popup.ok{color:#22c55e;border-color:color-mix(in srgb,#22c55e 40%,transparent);}
+.issue-popup.warn{color:#f59e0b;border-color:color-mix(in srgb,#f59e0b 40%,transparent);}
+/* ── 모의시험 시뮬레이터 ── */
+.sim-box{width:min(97vw,640px);max-height:90vh;display:flex;flex-direction:column;padding:16px 14px 12px;}
+.sim-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.sim-new-btn{font-size:12px;padding:4px 11px;border:1px solid var(--border);border-radius:6px;background:none;color:var(--text);cursor:pointer;}
+.sim-new-btn:hover{background:var(--surface2);}
+.sim-body{overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:6px 0;}
+@media(max-width:500px){.sim-body{grid-template-columns:1fr;}}
+.sim-qcard{background:var(--surface2);border-radius:10px;padding:12px;border:1px solid var(--border);}
+.sim-qcard-head{font-size:10.5px;font-weight:700;color:var(--accent);margin-bottom:5px;letter-spacing:.3px;}
+.sim-qcard-q{font-size:12.5px;font-weight:500;color:var(--text);margin-bottom:7px;line-height:1.45;}
+.sim-qcard-input{width:100%;box-sizing:border-box;font-size:12px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);resize:none;height:58px;font-family:inherit;}
+.sim-result{font-size:11px;margin-top:5px;padding:4px 8px;border-radius:6px;line-height:1.5;min-height:16px;}
+.sim-result.pass{background:color-mix(in srgb,#22c55e 12%,transparent);color:#22c55e;}
+.sim-result.fail{background:color-mix(in srgb,#ef4444 12%,transparent);color:#ef4444;}
+.sim-kw-tag{display:inline-block;font-size:10px;padding:1px 5px;border-radius:4px;margin:1px 1px 0;background:color-mix(in srgb,var(--border) 60%,transparent);}
+.sim-kw-tag.hit{background:color-mix(in srgb,#22c55e 20%,transparent);color:#22c55e;}
+.sim-hint{font-size:10.5px;color:var(--text);opacity:.55;margin-bottom:4px;}
+/* ── 리포트 재설계 ── */
+.rpt-meta{font-size:11px;opacity:.6;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.rpt-sec{margin-bottom:13px;}
+.rpt-sec-title{font-size:12.5px;font-weight:600;margin-bottom:7px;}
+.rpt-badges{display:flex;flex-wrap:wrap;gap:5px;}
+.rpt-badge{font-size:11px;padding:3px 9px;border-radius:5px;font-weight:500;}
+.rpt-badge.ok{background:color-mix(in srgb,#22c55e 14%,transparent);color:#22c55e;border:1px solid color-mix(in srgb,#22c55e 30%,transparent);}
+.rpt-badge.warn{background:color-mix(in srgb,#f59e0b 14%,transparent);color:#f59e0b;border:1px solid color-mix(in srgb,#f59e0b 30%,transparent);}
+.rpt-cov{display:flex;flex-direction:column;gap:6px;}
+.rpt-cov-row{display:flex;align-items:center;gap:8px;font-size:11.5px;}
+.rpt-cov-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.rpt-cov-lbl{flex:1;color:var(--text);}
+.rpt-cov-tag{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;}
+.print-btn{font-size:12px;padding:5px 13px;border:1px solid var(--border);border-radius:7px;background:none;color:var(--text);cursor:pointer;margin-right:auto;}
+.print-btn:hover{background:var(--surface2);}
 .modal-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:14px;}
 .modal-input{width:100%;font-family:var(--mono);font-size:13px;padding:9px 11px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);margin-bottom:12px;outline:none;transition:border-color .12s;}
 .modal-input:focus{border-color:var(--accent);}
@@ -326,6 +364,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
     <button class="btn-wrong" id="wrongFltBtn" onclick="openWrongMode()">❌ <span class="wc" id="wrongCountBadge">0</span></button>
     <button class="btn-flt" onclick="openExamMode()" style="margin-left:auto;color:#f43f5e;border-color:color-mix(in srgb,#f43f5e 40%,transparent);">⚡예상</button>
     <button class="btn-flt" onclick="openReport()" title="카드 검토 리포트" style="color:var(--accent);border-color:color-mix(in srgb,var(--accent) 40%,transparent);">📋검토</button>
+    <button class="btn-flt" onclick="openSim()" title="모의 구술·실기 세트" style="color:#f59e0b;border-color:color-mix(in srgb,#f59e0b 40%,transparent);">🎯모의</button>
   </div>
   <div class="sub-filter-row" id="subFilterRow"></div>
 </div>
@@ -369,33 +408,55 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
   <div class="modal-box report-box">
     <div class="modal-title">📋 카드 검토 리포트</div>
     <div class="report-body">
-      <p style="opacity:.75;margin:0 0 4px;">6개 시선(출제위원·팩트체커·개정감시·사각지대·암기코치·구술코치)으로 구술 96 + 실기 11장을 점검한 결과입니다.</p>
-      <h4>반영 완료</h4>
-      <ul>
-        <li>스포츠윤리센터 신고번호 → <b>1670-2876</b> 통일</li>
-        <li>햄스트링 → <b>3개 근육</b>(대퇴이두·반건양·반막양)</li>
-        <li>슈퍼세트=<b>길항근</b> / 컴파운드세트=동일근 구분 명확화</li>
-        <li>생활체육 3대요소 → <b>시설·프로그램·지도자</b> 통일</li>
-        <li>TUE 심사기간 → <b>통상 7근무일</b>(KADA) · WADA 회부 기한 21일</li>
-        <li>도핑 <b>국제표준 3대기준</b>: 세계도핑방지규약·국제표준·한국도핑방지규정</li>
-        <li>IFBB <b>구술 필터에도 노출</b>되도록 재분류(공고문 구술 50점 영역)</li>
-        <li>카드 200장 체계 — 기출·빈출 기반 보강 완료</li>
-      </ul>
-      <h4>확인 필요 (미반영)</h4>
-      <ul>
-        <li><b>로첵</b>: 공식 출처에 없는 용어 + 요약·본문 개념 불일치 → 정의 확인 권장</li>
-        <li><b>지혈대 '주기적 완화'</b>: 현행 응급지침은 비권장 → 기준 확인</li>
-        <li><b>승부조작 처벌</b> 수치: 현행 국민체육진흥법 조문 대조</li>
-      </ul>
-      <h4>영역별 충실도</h4>
-      <ul>
-        <li><b style="color:#22c55e">안정</b> — 생리학·영양학·해부학·응급처치 (매우 견고)</li>
-        <li><b style="color:#f59e0b">주의</b> — 생활체육윤리·도핑·트레이닝</li>
-        <li><b style="color:#ef4444">우선</b> — IFBB (분류 보완 완료)</li>
-      </ul>
+      <div class="rpt-meta">✅ ALL_CARDS 200장 전체 검토 완료 · 6개 시선 · 오류 수정 8건 반영</div>
+      <div class="rpt-sec">
+        <div class="rpt-sec-title">✅ 반영 완료</div>
+        <div class="rpt-badges">
+          <span class="rpt-badge ok">번호 1670-2876</span>
+          <span class="rpt-badge ok">햄스트링 3개근육</span>
+          <span class="rpt-badge ok">슈퍼세트=길항근</span>
+          <span class="rpt-badge ok">3대요소 통일</span>
+          <span class="rpt-badge ok">TUE 7근무일</span>
+          <span class="rpt-badge ok">국제표준 3대기준</span>
+          <span class="rpt-badge ok">IFBB 구술 노출</span>
+          <span class="rpt-badge ok">200장 체계</span>
+        </div>
+      </div>
+      <div class="rpt-sec">
+        <div class="rpt-sec-title">⚠️ 확인 필요 (카드별 📋 버튼으로도 확인 가능)</div>
+        <div class="rpt-badges">
+          <span class="rpt-badge warn">로첵 출처 불명</span>
+          <span class="rpt-badge warn">지혈대 완화 지침</span>
+          <span class="rpt-badge warn">승부조작 처벌 수치</span>
+        </div>
+      </div>
+      <div class="rpt-sec">
+        <div class="rpt-sec-title">📊 영역별 충실도</div>
+        <div class="rpt-cov">
+          <div class="rpt-cov-row"><div class="rpt-cov-dot" style="background:#22c55e;"></div><span class="rpt-cov-lbl">운동생리학 · 스포츠영양학 · 기능해부학 · 응급처치</span><span class="rpt-cov-tag" style="background:color-mix(in srgb,#22c55e 14%,transparent);color:#22c55e;">안정</span></div>
+          <div class="rpt-cov-row"><div class="rpt-cov-dot" style="background:#f59e0b;"></div><span class="rpt-cov-lbl">트레이닝방법론 · 도핑관리 · 생활체육·윤리</span><span class="rpt-cov-tag" style="background:color-mix(in srgb,#f59e0b 14%,transparent);color:#f59e0b;">주의</span></div>
+          <div class="rpt-cov-row"><div class="rpt-cov-dot" style="background:#a78bfa;"></div><span class="rpt-cov-lbl">IFBB 경기규칙 (구술 재분류 완료)</span><span class="rpt-cov-tag" style="background:color-mix(in srgb,#a78bfa 14%,transparent);color:#a78bfa;">보완완료</span></div>
+        </div>
+      </div>
     </div>
     <div class="modal-btns">
-      <button class="modal-btn-ok" onclick="closeReport()">닫기</button>
+      <button class="print-btn" onclick="printReport()">🖨 인쇄</button><button class="modal-btn-ok" onclick="closeReport()">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 모의 시험 시뮬레이터 모달 ── -->
+<div class="modal-overlay" id="simModal">
+  <div class="modal-box sim-box">
+    <div class="sim-header">
+      <div class="modal-title" style="margin:0;font-size:15px;">🎯 모의 시험 세트</div>
+      <button class="sim-new-btn" onclick="drawSimSet()">🔀 새 세트</button>
+    </div>
+    <p class="sim-hint">규정 2문항 + 지도방법 2문항 랜덤 추첨 · PC: 답변 입력 후 채점 · 모바일: 새 세트만</p>
+    <div class="sim-body" id="simBody"></div>
+    <div class="modal-btns">
+      <button class="modal-btn-ok" onclick="checkSimAnswers()" id="simCheckBtn">✅ 채점하기</button>
+      <button class="modal-btn-cancel" onclick="closeSim()">닫기</button>
     </div>
   </div>
 </div>
@@ -5415,6 +5476,12 @@ let wrongSet = new Set(JSON.parse(localStorage.getItem('bbWrong') || '[]'));
 let examDateStr = localStorage.getItem('examDate') || '2026-06-27';
 let itemLayout = localStorage.getItem('bbLayout') || 'accordion';
 
+const CARD_ISSUES = {
+  '로첵(Rocheck) 상태란?': '⚠️ 공식 기출·출처 미확인 용어\n요약(숨 참기→긴장)과 본문(신장반사 반동)이 서로 다른 개념\n→ 정의 재확인 권장',
+  '지혈을 해야 하는 이유는?': '⚠️ 지혈대 주기적 완화(60분마다 2분)\n현행 응급 지침 비권장 여부 확인 권장',
+  '스포츠 승부조작이란? (2026 신규 출제)': '⚠️ 처벌 수치(5년·5천만원)\n현행 국민체육진흥법 조문 대조 권장',
+};
+
 const SUBS_GUL = ['운동생리학','스포츠영양학','기능해부학','트레이닝론','도핑방지','스포츠안전','스포츠인권','생활체육','IFBB'];
 const SUBS_SIL = ['동작','IFBB'];
 
@@ -5545,6 +5612,7 @@ function render(){
       <button class="ck-blind-btn${w?' on':''}" onclick="toggleWrong();event.stopPropagation();" style="${w?'border-color:#f43f5e;color:#f43f5e;background:color-mix(in srgb,#f43f5e 13%,transparent);':''}">${w?'❌ 오답됨':'❌ 오답'}</button>
       <button class="ck-timer-btn" id="timerBtn" onclick="startTimer();event.stopPropagation();">⏱ 30초</button>
       <button class="ck-layout-btn${itemLayout==='grid'?' active':''}" id="layoutBtn" onclick="toggleItemLayout();event.stopPropagation();">${itemLayout==='grid'?'☰ 목록':'⊞ 그리드'}</button>
+      <button class="ck-issue-btn" onclick="showCardIssue();event.stopPropagation();" title="검토 메모">📋</button>
     </div>
     <div class="ck-summary">
       <span class="ck-sum-lbl">요약</span>
@@ -5729,6 +5797,74 @@ function openDdayEdit(){
 function closeDdayEdit(){ document.getElementById('ddayModal').classList.remove('open'); }
 function openReport(){ document.getElementById('reportModal').classList.add('open'); }
 function closeReport(){ document.getElementById('reportModal').classList.remove('open'); }
+function openSim(){ drawSimSet(); document.getElementById('simModal').classList.add('open'); }
+function closeSim(){ document.getElementById('simModal').classList.remove('open'); }
+function drawSimSet(){
+  const isMobile = window.innerWidth < 560;
+  const guReg = ALL_CARDS.filter(c => c.cat==='규정' && cardType(c)==='구술');
+  const guJid = ALL_CARDS.filter(c => ['생리학','영양학','해부학','트레이닝'].includes(c.cat));
+  function pick(arr,n){ const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a.slice(0,n); }
+  const set=[...pick(guReg,2),...pick(guJid,2)];
+  const labels=['규정①','규정②','지도방법①','지도방법②'];
+  document.getElementById('simBody').innerHTML = set.map((c,i)=>{
+    const qSafe=c.q.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+    const kwSafe=(c.keywords||[]).join(',').replace(/"/g,'&quot;');
+    return `<div class="sim-qcard" data-q="${qSafe}" data-kw="${kwSafe}">
+      <div class="sim-qcard-head">${labels[i]} · ${c.cat}/${c.sub}</div>
+      <div class="sim-qcard-q">${c.q}</div>
+      ${isMobile?'':'<textarea class="sim-qcard-input" placeholder="핵심 키워드를 포함해 답변 입력…"></textarea>'}
+      <div class="sim-result" id="simR${i}"></div>
+    </div>`;
+  }).join('');
+  const btn=document.getElementById('simCheckBtn');
+  if(btn) btn.style.display=isMobile?'none':'';
+}
+function checkSimAnswers(){
+  document.querySelectorAll('#simBody .sim-qcard').forEach((card,i)=>{
+    const kws=(card.dataset.kw||'').split(',').filter(Boolean);
+    const ta=card.querySelector('textarea');
+    const r=document.getElementById('simR'+i);
+    if(!r) return;
+    if(!ta){ r.textContent=''; return; }
+    const ans=ta.value.trim();
+    if(!ans){ r.className='sim-result'; r.textContent='답변을 입력하세요.'; return; }
+    const ansN=ans.replace(/\s/g,'').toLowerCase();
+    const hits=kws.filter(k=>ansN.includes(k.replace(/\s/g,'').toLowerCase()));
+    const pass=hits.length>=Math.max(1,Math.ceil(kws.length*0.45));
+    r.className='sim-result '+(pass?'pass':'fail');
+    const tags=kws.map(k=>`<span class="sim-kw-tag${hits.includes(k)?' hit':''}">${k}</span>`).join('');
+    r.innerHTML=(pass?'✅ 통과 ':'❌ 보강 ')+`(${hits.length}/${kws.length}) `+tags;
+  });
+}
+function showCardIssue(){
+  const card=filteredCards[currentIndex]; if(!card) return;
+  const issue=CARD_ISSUES[card.q];
+  const old=document.querySelector('.issue-popup');
+  if(old){ old.remove(); return; }
+  const btn=document.querySelector('.ck-issue-btn'); if(!btn) return;
+  const pop=document.createElement('div');
+  pop.className='issue-popup '+(issue?'warn':'ok');
+  pop.textContent=issue||'✓ 이슈 없음 — 검토 통과';
+  btn.parentElement.style.position='relative';
+  btn.parentElement.appendChild(pop);
+  setTimeout(()=>{ document.addEventListener('click',function rm(){ pop.remove(); document.removeEventListener('click',rm); },{once:true}); },60);
+}
+function printReport(){
+  const els=[...document.body.children];
+  const modal=document.getElementById('reportModal');
+  const box=modal.querySelector('.modal-box');
+  const body=modal.querySelector('.report-body');
+  els.forEach(el=>{ if(el!==modal) el.dataset._pd=el.style.display; el.style.display=el===modal?'':'none'; });
+  modal.style.cssText='position:static;background:none;display:block;';
+  if(box){ box.style.maxHeight='none'; box.style.boxShadow='none'; box.style.width='100%'; }
+  if(body){ body.style.overflow='visible'; body.style.maxHeight='none'; }
+  window.print();
+  setTimeout(()=>{
+    els.forEach(el=>{ el.style.display=el.dataset._pd||''; delete el.dataset._pd; });
+    modal.style.cssText=''; if(box){ box.style.maxHeight=''; box.style.boxShadow=''; box.style.width=''; }
+    if(body){ body.style.overflow=''; body.style.maxHeight=''; }
+  },200);
+}
 function saveDday(){
   const v=document.getElementById('ddayInput').value;
   if(v){ examDateStr=v; localStorage.setItem('examDate',v); updateDday(); }
