@@ -3594,8 +3594,8 @@ let wrongSet = new Set(JSON.parse(localStorage.getItem('bbWrong') || '[]'));
 let examDateStr = localStorage.getItem('examDate') || '2026-06-27';
 let itemLayout = localStorage.getItem('bbLayout') || 'accordion';
 
-const SUBS_GUL = ['운동생리학','스포츠영양학','기능해부학','트레이닝론','도핑방지','스포츠안전','스포츠인권','생활체육'];
-const SUBS_SIL = ['동작','포징'];
+const SUBS_GUL = ['운동생리학','스포츠영양학','기능해부학','트레이닝론','도핑방지','스포츠안전','스포츠인권','생활체육','IFBB'];
+const SUBS_SIL = ['동작','IFBB'];
 
 // ── 유형/과목 매핑 ──
 function cardType(c){
@@ -3604,7 +3604,7 @@ function cardType(c){
   return '구술';
 }
 function cardSubject(c){
-  if(cardType(c)==='실기') return c.cat==='트레이닝' ? '동작' : '포징';
+  if(cardType(c)==='실기') return c.cat==='트레이닝' ? '동작' : 'IFBB';
   if(c.cat==='생리학') return '운동생리학';
   if(c.cat==='영양학') return '스포츠영양학';
   if(c.cat==='해부학') return '기능해부학';
@@ -3663,7 +3663,8 @@ function setSubFilter(sub, el){
 }
 function applyFilter(){
   filteredCards = ALL_CARDS.filter(c=>{
-    if(filterMode!=='전체' && cardType(c)!==filterMode) return false;
+    const _ifbb = c.cat==='규정' && ['IFBB 종목','IFBB 복장','IFBB 규정'].includes(c.sub);
+    if(filterMode!=='전체' && cardType(c)!==filterMode && !_ifbb) return false;
     if(filterSub!=='all'   && cardSubject(c)!==filterSub) return false;
     return true;
   });
