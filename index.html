@@ -181,6 +181,12 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .modal-overlay{display:none;position:fixed;inset:0;background:#0008;z-index:100;align-items:center;justify-content:center;}
 .modal-overlay.open{display:flex;}
 .modal-box{background:var(--surface);border-radius:14px;border:1px solid var(--border);padding:20px 18px 16px;width:280px;box-shadow:0 20px 50px #0003;}
+.report-box{width:min(92vw,520px);max-height:82vh;display:flex;flex-direction:column;padding:18px 16px 14px;}
+.report-body{overflow-y:auto;-webkit-overflow-scrolling:touch;font-size:12.5px;line-height:1.55;color:var(--text);margin:8px 0 12px;text-align:left;}
+.report-body h4{font-size:13px;margin:13px 0 5px;color:var(--accent);}
+.report-body ul{margin:4px 0 9px;padding-left:17px;}
+.report-body li{margin:4px 0;}
+.report-body b{font-weight:600;}
 .modal-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:14px;}
 .modal-input{width:100%;font-family:var(--mono);font-size:13px;padding:9px 11px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);margin-bottom:12px;outline:none;transition:border-color .12s;}
 .modal-input:focus{border-color:var(--accent);}
@@ -319,6 +325,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
     <button class="btn-flt sil"  data-mode="실기" onclick="setFilterMode('실기',this)">실기</button>
     <button class="btn-wrong" id="wrongFltBtn" onclick="openWrongMode()">❌ <span class="wc" id="wrongCountBadge">0</span></button>
     <button class="btn-flt" onclick="openExamMode()" style="margin-left:auto;color:#f43f5e;border-color:color-mix(in srgb,#f43f5e 40%,transparent);">⚡예상</button>
+    <button class="btn-flt" onclick="openReport()" title="카드 검토 리포트" style="color:var(--accent);border-color:color-mix(in srgb,var(--accent) 40%,transparent);">📋검토</button>
   </div>
   <div class="sub-filter-row" id="subFilterRow"></div>
 </div>
@@ -353,6 +360,42 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
     <div class="modal-btns">
       <button class="modal-btn-cancel" onclick="closeDdayEdit()">취소</button>
       <button class="modal-btn-ok" onclick="saveDday()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 카드 검토 리포트 모달 (D3) ── -->
+<div class="modal-overlay" id="reportModal">
+  <div class="modal-box report-box">
+    <div class="modal-title">📋 카드 검토 리포트</div>
+    <div class="report-body">
+      <p style="opacity:.75;margin:0 0 4px;">6개 시선(출제위원·팩트체커·개정감시·사각지대·암기코치·구술코치)으로 구술 96 + 실기 11장을 점검한 결과입니다.</p>
+      <h4>반영 완료</h4>
+      <ul>
+        <li>스포츠윤리센터 신고번호 → <b>1670-2876</b> 통일</li>
+        <li>햄스트링 → <b>3개 근육</b>(대퇴이두·반건양·반막양)</li>
+        <li>슈퍼세트=<b>길항근</b> / 컴파운드세트=동일근 구분 명확화</li>
+        <li>생활체육 3대요소 → <b>시설·프로그램·지도자</b> 통일</li>
+        <li>TUE 심사기간 → <b>통상 7근무일</b>(KADA), WADA 회부 21일</li>
+        <li>도핑 <b>국제표준</b> 보강: 세계도핑방지규약+국제표준+KADA</li>
+        <li>중복카드 통합(승부조작·폭력 각 2→1)</li>
+        <li>IFBB <b>구술에서도 학습 가능</b>하게 재분류(구술 50점 영역)</li>
+      </ul>
+      <h4>확인 필요 (미반영)</h4>
+      <ul>
+        <li><b>로첵</b>: 공식 출처에 없는 용어 + 요약·본문 개념 불일치 → 정의 확인 권장</li>
+        <li><b>지혈대 '주기적 완화'</b>: 현행 응급지침은 비권장 → 기준 확인</li>
+        <li><b>승부조작 처벌</b> 수치: 현행 국민체육진흥법 조문 대조</li>
+      </ul>
+      <h4>영역별 충실도</h4>
+      <ul>
+        <li><b style="color:#22c55e">안정</b> — 생리학·영양학·해부학·응급처치 (매우 견고)</li>
+        <li><b style="color:#f59e0b">주의</b> — 생활체육윤리·도핑·트레이닝</li>
+        <li><b style="color:#ef4444">우선</b> — IFBB (분류 보완 완료)</li>
+      </ul>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-btn-ok" onclick="closeReport()">닫기</button>
     </div>
   </div>
 </div>
@@ -5248,6 +5291,8 @@ function openDdayEdit(){
   document.getElementById('ddayModal').classList.add('open');
 }
 function closeDdayEdit(){ document.getElementById('ddayModal').classList.remove('open'); }
+function openReport(){ document.getElementById('reportModal').classList.add('open'); }
+function closeReport(){ document.getElementById('reportModal').classList.remove('open'); }
 function saveDday(){
   const v=document.getElementById('ddayInput').value;
   if(v){ examDateStr=v; localStorage.setItem('examDate',v); updateDday(); }
