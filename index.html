@@ -5836,17 +5836,19 @@ function doSearch(q){
 }
 function jumpToSearchCard(globalIdx){
   closeSearch();
+  // 필터 UI 초기화
   filterMode='전체'; filterSub='all';
   document.querySelectorAll('.filter-main .btn-flt').forEach(b=>b.classList.remove('act'));
   const allBtn=document.querySelector('.filter-main .btn-flt[data-mode="전체"]');
   if(allBtn) allBtn.classList.add('act');
-  buildSubFilter(); applyFilter();
-  const card=ALL_CARDS[globalIdx];
-  const pos=filteredCards.indexOf(card);
-  if(pos>=0) currentIndex=pos;
-  renderCard();
-  const area=document.getElementById('cardArea')||document.querySelector('.card-wrap');
-  if(area) area.scrollIntoView({behavior:'smooth',block:'start'});
+  buildSubFilter();
+  // applyFilter() 대신 직접 재계산 — applyFilter는 currentIndex=0 리셋 후 render()를 먼저 호출해버리므로
+  filteredCards = ALL_CARDS.slice();
+  const pos = filteredCards.indexOf(ALL_CARDS[globalIdx]);
+  currentIndex = pos >= 0 ? pos : 0;
+  blurOn = false; resetTimer();
+  render();
+  window.scrollTo({top:0, behavior:'smooth'});
 }
 
 // ── D-day ──
