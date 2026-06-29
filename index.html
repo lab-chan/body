@@ -39,6 +39,11 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .btn-theme{width:30px;height:30px;border:1px solid var(--border);background:var(--surface2);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:border-color .15s;}
 .btn-theme:hover{border-color:var(--accent);}
 .btn-search{width:30px;height:30px;border:1px solid var(--border);background:var(--surface2);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;transition:border-color .15s;}
+.tb-more{position:relative;display:flex;}
+.tb-menu{position:absolute;top:37px;right:0;background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 26px rgba(0,0,0,.2);padding:5px;display:none;flex-direction:column;gap:3px;z-index:60;min-width:128px;}
+.tb-menu.open{display:flex;}
+.tb-menu button{text-align:left;white-space:nowrap;padding:9px 12px;border:none;background:transparent;color:var(--text);font-family:var(--sans);font-size:13px;font-weight:600;border-radius:7px;cursor:pointer;}
+.tb-menu button:hover{background:var(--surface2);}
 .btn-search:hover{border-color:var(--accent);}
 .topbar-right{display:flex;gap:6px;justify-self:end;align-items:center;}
 .search-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.55);justify-content:center;padding-top:64px;}
@@ -77,8 +82,17 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .btn-sub.act{background:var(--accent);border-color:var(--accent);color:#fff;}
 
 /* ── 진행 영역 : 좌 "과목 (소분류)" / 우 진행바+별표+숫자 ── */
-.prog-area{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:9px 13px 8px;}
-.prog-subject{flex:1;min-width:0;font-size:15px;font-weight:800;letter-spacing:-.01em;line-height:1.3;padding:1px 0 1px 11px;border-left:3px solid var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.prog-area{display:flex;flex-direction:column;gap:7px;padding:9px 13px 8px;}
+.prog-info-row{display:flex;align-items:center;gap:10px;}
+.prog-left{flex:1;min-width:0;display:flex;align-items:center;gap:7px;overflow:hidden;}
+.prog-xp{width:46%;flex-shrink:0;display:flex;align-items:center;gap:6px;cursor:pointer;}
+.pxp-lv{font-size:11px;font-weight:800;color:var(--accent);white-space:nowrap;}
+.pxp-wrap{flex:1;height:6px;background:var(--surface2);border-radius:999px;overflow:hidden;}
+.pxp-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--gul),var(--accent));border-radius:999px;transition:width .35s;}
+.pxp-streak{font-size:11px;font-weight:700;color:var(--sil);white-space:nowrap;}
+.prog-subject{min-width:0;font-size:11px;font-weight:700;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:1;}
+.prog-subject .ps-cat{font-size:11px;font-weight:800;}
+.prog-subject .ps-sub{font-size:11px;font-weight:500;color:var(--text-dim);margin-left:2px;}
 .prog-subject .ps-cat{font-weight:800;}
 .prog-subject .ps-sub{font-weight:500;color:var(--text-md);font-size:13px;margin-left:3px;}
 .prog-right{width:50%;flex-shrink:0;display:flex;flex-direction:column;gap:5px;}
@@ -86,7 +100,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .prog-fill{height:100%;background:var(--cc);border-radius:3px;transition:width .3s ease;}
 .prog-meta-row{display:flex;align-items:center;justify-content:space-between;}
 .prog-stars{font-size:12px;color:var(--sil);letter-spacing:1px;}
-.prog-count{font-family:var(--mono);font-size:10px;color:var(--text-dim);}
+.prog-count{font-family:var(--mono);font-size:11px;color:var(--text-dim);flex-shrink:0;}
 
 /* ── 카드 ── */
 #card{margin:8px 10px 0;background:var(--surface);border:1.5px solid var(--border);border-top:3px solid var(--cc);border-radius:13px;overflow:hidden;--cc:var(--accent);}
@@ -360,6 +374,13 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
     <div class="topbar-right">
       <button class="btn-search" onclick="openSearch()" title="카드 검색">🔍</button>
       <button class="btn-theme" id="themeBtn" onclick="toggleTheme()">🌙</button>
+      <div class="tb-more">
+        <button class="btn-theme" onclick="toggleMoreMenu(event)" title="더보기">⋯</button>
+        <div class="tb-menu" id="tbMenu">
+          <button onclick="closeMoreMenu();openExamMode();">⚡ 예상문제</button>
+          <button onclick="closeMoreMenu();openSim();">🎯 모의시험</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -371,20 +392,23 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
     <button class="btn-flt gul"  data-mode="구술" onclick="setFilterMode('구술',this)">구술</button>
     <button class="btn-flt sil"  data-mode="실기" onclick="setFilterMode('실기',this)">실기</button>
     <button class="btn-wrong" id="wrongFltBtn" onclick="openWrongMode()">❌ <span class="wc" id="wrongCountBadge">0</span></button>
-    <button class="btn-flt" onclick="openExamMode()" style="margin-left:auto;color:#f43f5e;border-color:color-mix(in srgb,#f43f5e 40%,transparent);">⚡예상</button>
-    <button class="btn-flt" onclick="openSim()" title="모의 구술·실기 세트" style="color:#f59e0b;border-color:color-mix(in srgb,#f59e0b 40%,transparent);">🎯모의</button>
   </div>
   <div class="sub-filter-row" id="subFilterRow"></div>
 </div>
 
 <!-- ── 진행 영역 (좌 과목(소분류) / 우 진행바+별표+숫자) ── -->
 <div class="prog-area" id="progArea">
-  <span class="prog-subject" id="progSubject">운동생리학</span>
-  <div class="prog-right">
-    <div class="prog-bar"><div class="prog-fill" id="progressFill" style="width:0%"></div></div>
-    <div class="prog-meta-row">
+  <div class="prog-bar"><div class="prog-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="prog-info-row">
+    <div class="prog-left">
+      <span class="prog-subject" id="progSubject">운동생리학</span>
       <span class="prog-stars" id="progStars"></span>
       <span class="prog-count" id="progressText">1 / 107</span>
+    </div>
+    <div class="prog-xp" id="progXp" onclick="openStats()">
+      <span class="pxp-lv">Lv.<b id="gbLv">1</b></span>
+      <div class="pxp-wrap"><div class="pxp-bar" id="gbXp"></div></div>
+      <span class="pxp-streak" id="gbStreak">🔥0</span>
     </div>
   </div>
 </div>
@@ -6527,13 +6551,6 @@ function resetStats(){
 }
 
 document.addEventListener('DOMContentLoaded', function(){
-  const fb=document.getElementById('filterBar');
-  if(fb && !document.getElementById('gameBar')){
-    const gb=document.createElement('div');
-    gb.className='game-bar'; gb.id='gameBar'; gb.setAttribute('onclick','openStats()');
-    gb.innerHTML='<span class="gb-lv">Lv.<b id="gbLv">1</b></span><div class="gb-xpwrap"><div class="gb-xp" id="gbXp"></div></div><span class="gb-streak" id="gbStreak">🔥0</span>';
-    fb.parentNode.insertBefore(gb, fb.nextSibling);
-  }
   const wb=document.getElementById('wrongFltBtn');
   if(wb && !document.getElementById('reviewFltBtn')){
     const rb=document.createElement('button');
@@ -6632,6 +6649,10 @@ function toggleSocratic(){
   p.classList.toggle('open');
   if(p.classList.contains('open')){ const card=filteredCards[currentIndex]; socPaint(socFlat(card)); }
 }
+
+function toggleMoreMenu(e){ if(e) e.stopPropagation(); const m=document.getElementById('tbMenu'); if(m) m.classList.toggle('open'); }
+function closeMoreMenu(){ const m=document.getElementById('tbMenu'); if(m) m.classList.remove('open'); }
+document.addEventListener('click', function(e){ if(!e.target.closest('.tb-more')) closeMoreMenu(); });
 
 // ── 스타일 추가 ──
 const examStyle = document.createElement('style');
