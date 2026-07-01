@@ -2561,6 +2561,7 @@ function render(){
 
 // ── 답안 항목 HTML 빌더 ──
 function buildItemsHtml(card){
+  if(!card.items || !card.items.length) return '';
   const tot = card.items.length;
   return card.items.map((it,idx)=>{
     const kw = extractKw(it.t);
