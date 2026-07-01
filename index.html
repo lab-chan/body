@@ -131,6 +131,16 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 .ck-sum-txt{font-size:13px;line-height:1.5;color:var(--text-md);flex:1;transition:filter .2s;}
 #card.blind .ck-sum-txt{filter:blur(6px);user-select:none;}
 .ck-longform{white-space:pre-wrap;font-size:14px;line-height:1.7;color:var(--text);padding:2px 0;word-break:break-word;}
+.ck-longform .lf-head{font-weight:800;font-size:13.5px;color:var(--cc,#4f5de8);margin:15px 0 7px;padding:3px 0 3px 10px;border-left:3px solid var(--cc,#4f5de8);letter-spacing:-0.2px;}
+.ck-longform .lf-head:first-child{margin-top:2px;}
+.ck-longform .lf-para{font-size:14px;line-height:1.62;color:var(--text);margin:4px 0;}
+.ck-longform .lf-item{display:flex;gap:9px;align-items:flex-start;margin:9px 0 3px;}
+.ck-longform .lf-num{flex:0 0 auto;min-width:20px;height:20px;padding:0 5px;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:#fff;background:var(--cc,#4f5de8);border-radius:6px;margin-top:1px;}
+.ck-longform .lf-itxt{flex:1;font-size:14px;line-height:1.5;color:var(--text);font-weight:700;}
+.ck-longform .lf-sub{font-size:13px;line-height:1.55;color:var(--text-md);margin:2px 0 2px 29px;}
+.ck-longform .lf-star{font-size:12.5px;line-height:1.5;color:#e8890c;font-weight:700;margin:3px 0 3px 29px;}
+.ck-longform .lf-key{margin:13px 0 3px;padding:10px 12px;background:color-mix(in srgb,#22c55e 13%,transparent);border-left:3px solid #22c55e;border-radius:9px;font-size:13px;line-height:1.55;color:var(--text);font-weight:700;}
+
 .blind .ck-longform{filter:blur(6px);user-select:none;}
 #card.allopen .ck-longform{filter:none;}
 .ck-tip{margin-top:12px;padding:10px 12px;background:color-mix(in srgb,var(--sil) 12%,transparent);border-left:3px solid var(--sil);border-radius:8px;font-size:13px;line-height:1.55;color:var(--text-md);}
@@ -2533,11 +2543,11 @@ function render(){
   cardEl.className = [blurOn?'blind':'', itemLayout==='grid'?'grid-mode':''].filter(Boolean).join(' ');
   const isLong = !!(card.answer && (''+card.answer).trim());
   const mainBody = isLong
-    ? `<div class="ck-longform">${(''+card.answer).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>${card.tip?`<div class="ck-tip">💡 ${card.tip}</div>`:''}`
+    ? `<div class="ck-longform">${buildLongform(card.answer)}</div>${card.tip?`<div class="ck-tip">💡 ${card.tip}</div>`:''}`
     : `<div class="ck-summary"><span class="ck-sum-lbl">요약</span><span class="ck-sum-txt">${card.summary}</span></div><div class="ck-grid">${grid}</div>`;
   cardEl.innerHTML = `
     <div class="ck-q" onclick="revealAll()">
-      <span class="ck-q-txt">${card.q}</span>
+      <span class="ck-q-txt">${card.q.replace(/^[★☆\s]+/,'')}</span>
       <span class="ck-q-hint">전체공개</span>
     </div>
     <div class="ck-ctrl">
@@ -2560,6 +2570,28 @@ function render(){
   `;
   injectSrsBar(card);
   cardEl.style.animation='none'; cardEl.offsetHeight; cardEl.style.animation='';
+}
+
+// ── 긴글 답안 포매터 ──
+function buildLongform(txt){
+  var esc=function(s){return (''+s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
+  var NUM={'①':'1','②':'2','③':'3','④':'4','⑤':'5','⑥':'6','⑦':'7','⑧':'8','⑨':'9','⑩':'10','⑪':'11','⑫':'12','⑬':'13','⑭':'14','⑮':'15'};
+  try{
+    var lines=(''+txt).split('\n'), out=[], m;
+    for(var k=0;k<lines.length;k++){
+      var raw=lines[k], t=raw.trim();
+      if(!t) continue;
+      if((m=t.match(/^【([^】]*)】\s*(.*)$/))){ out.push('<div class="lf-head">'+esc(m[1])+'</div>'); if(m[2]) out.push('<div class="lf-para">'+esc(m[2])+'</div>'); continue; }
+      if((m=t.match(/^([①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮])\s*(.*)$/))){ out.push('<div class="lf-item"><span class="lf-num">'+(NUM[m[1]]||m[1])+'</span><span class="lf-itxt">'+esc(m[2])+'</span></div>'); continue; }
+      if((m=t.match(/^[✔✓]\s*(.*)$/))){ out.push('<div class="lf-key">✔ '+esc(m[1])+'</div>'); continue; }
+      if((m=t.match(/^★\s*(.*)$/))){ out.push('<div class="lf-star">★ '+esc(m[1])+'</div>'); continue; }
+      if(/^(\s{2,}|\t|　)/.test(raw)){ out.push('<div class="lf-sub">'+esc(t)+'</div>'); continue; }
+      if((m=t.match(/^[-•▶]\s*(.*)$/))){ out.push('<div class="lf-sub">'+esc(m[1])+'</div>'); continue; }
+      out.push('<div class="lf-para">'+esc(t)+'</div>');
+    }
+    var html=out.join('');
+    return html || esc(txt);
+  }catch(e){ return esc(txt); }
 }
 
 // ── 답안 항목 HTML 빌더 ──
